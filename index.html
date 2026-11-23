@@ -200,6 +200,20 @@ section { position: relative; padding: 130px 0; }
 .houses .spill { opacity: 0; transition: opacity .8s; }
 .houses .on .spill { opacity: 1; }
 
+/* porch lights map */
+.lights .lightsLede { color: rgba(247,236,219,.8); font-size: 18px; max-width: 640px; margin: 22px 0 0; }
+.map { margin-top: 40px; }
+.map svg { width: 100%; height: auto; display: block; }
+.map .st { fill: none; stroke: rgba(247,236,219,.10); stroke-width: 1; }
+.map circle { fill: #1b2742; transition: fill .9s ease, opacity .9s ease; }
+.map circle.on { fill: #ffb547; filter: url(#lg); }
+.map circle.new { animation: lightOn 1.6s ease; }
+@keyframes lightOn { 0% { fill: #fff6dd; opacity: 0; } 30% { opacity: 1; } 100% { fill: #ffb547; } }
+.litCount { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; margin-top: 20px; }
+.litCount b { font-family: var(--serif); font-weight: 600; font-size: clamp(56px, 8vw, 104px); line-height: 1; color: var(--amber); text-shadow: 0 0 30px rgba(255,181,71,.35); font-variant-numeric: tabular-nums; }
+.litCount .of { font-family: var(--serif); font-size: clamp(32px, 4.4vw, 56px); color: rgba(247,236,219,.55); font-weight: 500; }
+.litCount small { width: 100%; font-family: var(--mono); font-size: 11.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); }
+
 /* watch */
 .watch .frame { margin-top: 44px; border-radius: 30px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: var(--ink); box-shadow: 0 40px 120px rgba(0,0,0,.55); border: 1px solid var(--line); }
 .watch video { width: 100%; height: 100%; display: block; object-fit: cover; }
@@ -494,11 +508,22 @@ footer .base { display: flex; justify-content: space-between; gap: 20px; flex-wr
   </div>
 </section>
 
+<!-- PORCH LIGHTS MAP -->
+<section class="lights" id="lights" data-bg="#0a1020">
+  <div class="wrap">
+    <div class="label reveal"><i></i>04 <b>· the porch lights</b></div>
+    <h2 class="reveal">Light up <em>the country.</em></h2>
+    <p class="lightsLede reveal">Meals on Wheels America supports more than 5,000 local programmes across the US. Every dollar raised switches on more porch lights, and at $25,000 the whole map glows.</p>
+    <div class="map reveal"><svg viewBox="0 0 960 600" id="usmap" aria-label="Map of the United States made of porch lights that switch on as money is raised"><defs><filter id="lg" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path class="st" id="usOutline" d=""/><g id="usDots"></g></svg></div>
+    <div class="litCount reveal"><b id="litN">0</b><span class="of">/ <span id="litT">1,568</span></span><small>porch lights on</small></div>
+  </div>
+</section>
+
 <!-- HOW -->
 <section class="how" id="how" data-bg="#111a2e">
   <div class="pin">
     <div class="wrap intro">
-      <div><div class="label"><i></i>04 <b>· how it works</b></div><h2>From a trade<br>to a <em>doorstep.</em></h2></div>
+      <div><div class="label"><i></i>05 <b>· how it works</b></div><h2>From a trade<br>to a <em>doorstep.</em></h2></div>
       <p>$THANKS has one job: turning trading into hot meals and company for seniors this Thanksgiving.</p>
     </div>
     <div class="drive">
@@ -522,7 +547,7 @@ footer .base { display: flex; justify-content: space-between; gap: 20px; flex-wr
   <div class="wrap">
     <div class="grid">
       <div>
-        <div class="label reveal"><i></i>05 <b>· the coin</b></div>
+        <div class="label reveal"><i></i>06 <b>· the coin</b></div>
         <h2 class="reveal">One coin.<br><em>One table.</em></h2>
         <p class="lead reveal">$THANKS is a community memecoin on Solana with a single purpose: getting hot meals and company to seniors this Thanksgiving.</p>
         <div class="facts reveal">
@@ -644,6 +669,7 @@ function paintMeter() {
   }
   const w = Math.max(frac * 100, raised ? 1.5 : 0);
   $("barFill").style.width = w + "%"; $("vanMini").style.left = Math.max(w, 3) + "%";
+  paintMap();
 }
 function paintChain() {
   const m = meterData; if (!m) return;
@@ -656,10 +682,64 @@ async function loadMeter() {
   try {
     const r = await fetch(DATA_URL + "?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" });
     if (!r.ok) return; const m = await r.json(); if (!(m && m.totalUsd >= 0)) return;
-    meterData = m; raised = Math.max(+m.totalUsd || 0, 0); paintMeter(); paintChain();
+    const keep = meterData && meterData.lastSig !== m.lastSig && +meterData.totalUsd > +m.totalUsd ? meterData : null;
+    if (!keep) { meterData = m; raised = Math.max(+m.totalUsd || 0, 0); }
+    paintMeter(); paintMap(); paintChain(); liveCheck();
   } catch {}
 }
 function showMeter() { if (meterShown) return; meterShown = true; paintMeter(); }
+/* porch-light map: one light per (goal / number of lights) raised */
+let mapDots = [], litNow = -1;
+fetch("assets/map.json").then((r) => r.json()).then((m) => {
+  $("usOutline").setAttribute("d", m.o);
+  const g = $("usDots"), NS2 = "http://www.w3.org/2000/svg";
+  m.d.split(" ").forEach((p) => { const [x, y] = p.split(","); const c = document.createElementNS(NS2, "circle"); c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", innerWidth < 700 ? 5 : 3.2); g.appendChild(c); mapDots.push(c); });
+  $("litT").textContent = mapDots.length.toLocaleString("en-US"); paintMap();
+}).catch(() => {});
+function paintMap() {
+  if (!mapDots.length) return;
+  const n = Math.min(mapDots.length, Math.round(mapDots.length * Math.min(1, raised / goal)));
+  if (n === litNow) return;
+  const first = litNow < 0;
+  mapDots.forEach((c, i) => { const on = i < n; if (on && !c.classList.contains("on")) { c.classList.add("on"); if (!first) c.classList.add("new"); } else if (!on) c.classList.remove("on", "new"); });
+  if (first) countTo($("litN"), n); else countTo($("litN"), n, +$("litN").textContent.replace(/,/g, "") || 0);
+  litNow = n;
+}
+function countTo(el, to, from = 0) {
+  const t0 = performance.now(), dur = 1200;
+  const f = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e).toLocaleString("en-US"); if (k < 1) requestAnimationFrame(f); };
+  requestAnimationFrame(f);
+}
+/* live check: look for donations newer than the GitHub snapshot, straight from the chain, every 30s */
+const LIVE_RPC = "https://solana-rpc.publicnode.com", FEE_RECIPIENT = "sYjZCNo1HgDpg4ajibL9sDgwyeJ8EeTpdWUhKEPr5K7", DONATION_ACCT = "AgqbtJ1Fv73DKbwfzk9282t2L3Xbev6AkwoKQExJG5De";
+const seenSigs = new Set();
+async function rpcCall(method, params) { const r = await fetch(LIVE_RPC, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) }); const j = await r.json(); if (j.error) throw new Error("rpc"); return j.result; }
+let liveBusy = false;
+async function liveCheck() {
+  if (!meterData || liveBusy || document.hidden) return; liveBusy = true;
+  try {
+    (meterData.donations || []).forEach((d) => seenSigs.add(d.sig));
+    const opt = { limit: 50 }; if (meterData.lastSig) opt.until = meterData.lastSig;
+    const sigs = ((await rpcCall("getSignaturesForAddress", [FEE_RECIPIENT, opt])) || []).filter((s) => !s.err && !seenSigs.has(s.signature)).reverse();
+    let changed = false;
+    for (const s of sigs) {
+      seenSigs.add(s.signature);
+      const tx = await rpcCall("getTransaction", [s.signature, { maxSupportedTransactionVersion: 0, encoding: "json" }]); if (!tx) continue;
+      if (!(tx.meta.logMessages || []).some((l) => l.includes("DistributeCreatorFees"))) continue;
+      const keys = [...tx.transaction.message.accountKeys, ...(tx.meta.loadedAddresses?.writable || []), ...(tx.meta.loadedAddresses?.readonly || [])];
+      const i = keys.indexOf(DONATION_ACCT); if (i < 0) continue;
+      const sol = (tx.meta.postBalances[i] - tx.meta.preBalances[i]) / 1e9; if (sol <= 0) continue;
+      const usdv = sol * (meterData.solPrice || 0);
+      meterData.donations.push({ time: s.blockTime, sol, usd: usdv, sig: s.signature });
+      meterData.totalSol = +meterData.totalSol + sol; meterData.totalUsd = +meterData.totalUsd + usdv; meterData.count = (meterData.count || 0) + 1; changed = true;
+    }
+    if (sigs.length) meterData.lastSig = sigs[sigs.length - 1].signature;
+    meterData.updated = Math.floor(Date.now() / 1000);
+    if (changed) { raised = +meterData.totalUsd; paintMeter(); paintMap(); }
+    paintChain();
+  } catch {} finally { liveBusy = false; }
+}
+setInterval(liveCheck, 30000);
 buildOdo(0); $("vanMini").style.left = "3%"; paintMeter();
 loadMeter(); setInterval(loadMeter, 60000); setInterval(paintChain, 30000);
 
