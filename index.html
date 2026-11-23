@@ -367,7 +367,7 @@ footer .base { display: flex; justify-content: space-between; gap: 20px; flex-wr
         <a class="btn main" id="buyBtn" href="#token">Buy $THANKS <small>· soon</small></a>
         <a class="btn" href="#story">Watch the story</a>
       </div>
-      <div class="goal fade d3"><div><span>Goal</span><b>$25,000</b><em>raised for Meals on Wheels America by Thanksgiving dinner</em></div><div><span>Takes roughly</span><b>$1M</b><em>market cap</em></div></div>
+      <div class="goal fade d3"><div><span>Goal</span><b>$25,000</b><em>raised for Meals on Wheels America by Thanksgiving dinner</em></div></div>
     </div>
     <div class="scene fade d1" id="scene">
       <svg viewBox="0 0 600 500" aria-label="A volunteer delivering a Thanksgiving meal to a house with its porch light on">
@@ -470,7 +470,7 @@ footer .base { display: flex; justify-content: space-between; gap: 20px; flex-wr
       <div class="mstats">
         <div><span>Of the goal</span><b id="pct">0%</b></div>
         <div><span>Still to go</span><b id="togo">$25,000</b></div>
-        <div><span>Market cap target</span><b>≈ $1M</b></div>
+        <div><span>Porch lights on</span><b id="litStat">0</b></div>
       </div>
     </div>
   </div>
@@ -704,6 +704,7 @@ function paintMap() {
   mapDots.forEach((c, i) => { const on = i < n; if (on && !c.classList.contains("on")) { c.classList.add("on"); if (!first) c.classList.add("new"); } else if (!on) c.classList.remove("on", "new"); });
   if (first) countTo($("litN"), n); else countTo($("litN"), n, +$("litN").textContent.replace(/,/g, "") || 0);
   litNow = n;
+  const ls = $("litStat"); if (ls) ls.textContent = n.toLocaleString("en-US") + " / " + mapDots.length.toLocaleString("en-US");
 }
 function countTo(el, to, from = 0) {
   const t0 = performance.now(), dur = 1200;
