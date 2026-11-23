@@ -1,6 +1,6 @@
 // Site settings. Claude updates these: the CA at launch, and the creator fees raised.
 window.TG_CONFIG = {
-  CA: "",                                   // contract address (shows "Coming soon" until set)
+  CA: "BECqBzwZmkzM7A3tWimc2qvm7ookzYi8XACHMZgipump",                                 // contract address (shows "Coming soon" until set)
   TICKER: "$THANKS",
   X_URL: "https://x.com/thankscoinpf",
   GOAL_USD: 25000,
