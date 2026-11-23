@@ -10,5 +10,5 @@ window.TG_CONFIG = {
   DONATE_GG_URL: "",                        // set at launch (the coin's donate.gg page)
   VIDEO: "assets/story.mp4",                              // e.g. "assets/story.mp4" once the explainer is made
   VIDEO_POSTER: "assets/story-poster.jpg",
-  RAISED_USD: 1480,                          // total creator fees raised so far (USD)
+  RAISED_USD: 1881,                          // total creator fees raised so far (USD)
 };

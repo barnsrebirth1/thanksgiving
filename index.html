@@ -140,6 +140,12 @@ section { position: relative; padding: 130px 0; }
 .odo .sep { display: inline-block; margin: 0 .02em 0 -.02em; }
 .meter .sub { text-align: center; font-size: clamp(16px, 1.8vw, 20px); color: rgba(13,20,36,.72); position: relative; }
 .meter .sub b { color: var(--night); }
+.chain { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: 18px; font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em; color: rgba(13,20,36,.62); position: relative; }
+.chain b { color: var(--night); font-weight: 400; }
+.chain a { color: var(--cran); text-decoration: underline; text-underline-offset: 3px; }
+.chain .dot { opacity: .4; }
+.odo.bump { animation: bump .9s ease; }
+@keyframes bump { 30% { transform: scale(1.04); color: var(--cran); } }
 .road { position: relative; margin: 44px 0 10px; height: 54px; }
 .road .track { position: absolute; left: 0; right: 0; top: 38px; height: 8px; border-radius: 8px; background: rgba(13,20,36,.1); overflow: hidden; }
 .road .track i { position: absolute; inset: 0; width: 0; background: linear-gradient(90deg, var(--ember), var(--amber)); border-radius: 8px; transition: width 2.2s cubic-bezier(.2,.9,.25,1); }
@@ -438,9 +444,10 @@ footer .base { display: flex; justify-content: space-between; gap: 20px; flex-wr
     <div class="label reveal"><i></i>01 <b>· the meter</b></div>
     <h2 class="reveal">Every dollar, <em>on the record.</em></h2>
     <div class="meter reveal">
-      <div class="top"><div class="label"><i></i>Raised for Meals on Wheels America</div><div class="pill"><i></i>Deadline: Thanksgiving dinner</div></div>
+      <div class="top"><div class="label"><i></i>Raised for Meals on Wheels America</div><div class="pill"><i></i><span id="liveTxt">Live · on-chain</span></div></div>
       <div class="odo" id="odo" aria-live="polite"></div>
       <div class="sub">of a <b>$25,000</b> goal by Thanksgiving dinner</div>
+      <div class="chain" id="chain"><span><b id="solTot">0</b> SOL sent to charity</span><span class="dot">·</span><span><b id="donN">0</b> donations</span><span class="dot">·</span><span id="lastDon">Waiting for the first donation</span></div>
       <div class="road">
         <div class="track"><i id="barFill"></i></div><div class="dash"></div>
         <svg class="vanMini" id="vanMini" viewBox="0 0 64 34"><path d="M2 6h40a6 6 0 0 1 6 6v16H2z" fill="#0d1424"/><path d="M48 10h7l7 9v9H48z" fill="#1b2742"/><circle cx="14" cy="29" r="5" fill="#ef7b3b"/><circle cx="50" cy="29" r="5" fill="#ef7b3b"/><path d="M22 20c-2.2-1.6-3.6-2.7-3.6-4 0-1 .8-1.8 1.8-1.8.7 0 1.3.4 1.8 1 .5-.6 1.1-1 1.8-1 1 0 1.8.8 1.8 1.8 0 1.3-1.4 2.4-3.6 4z" fill="#ffb547"/></svg>
@@ -611,24 +618,50 @@ function tick() {
 }
 tick(); setInterval(tick, 1000);
 
-/* ---------- meter (odometer) ---------- */
-const raised = +C.RAISED_USD || 0;
-const goal = C.GOAL_USD || 25000, frac = Math.min(1, raised / goal);
-$("pct").textContent = (frac * 100).toFixed(frac > 0 && frac < .1 ? 1 : 0) + "%";
-$("togo").textContent = usd(Math.max(0, goal - raised));
-const odoStr = usd(raised);
-$("odo").innerHTML = [...odoStr].map((ch) => /\d/.test(ch)
-  ? `<span class="col"><span data-d="${ch}">${Array.from({ length: 20 }, (_, i) => `<b>${i % 10}</b>`).join("")}</span></span>`
-  : `<span class="sep">${ch}</span>`).join("");
-let meterShown = false;
-function showMeter() {
-  if (meterShown) return; meterShown = true;
-  document.querySelectorAll("#odo .col > span").forEach((s, i) => { const d = +s.dataset.d; s.style.transitionDelay = i * 90 + "ms"; s.style.transform = `translateY(-${(10 + d)}em)`; });
+/* ---------- meter (live, on-chain) ---------- */
+const goal = C.GOAL_USD || 25000;
+const DATA_URL = "https://raw.githubusercontent.com/barnsrebirth1/thanksgiving/meter-data/meter.json";
+let raised = +C.RAISED_USD || 0, meterShown = false, lastShown = -1, meterData = null;
+function ago(t) { const m = Math.max(0, Math.round((Date.now() / 1000 - t) / 60)); return m < 1 ? "just now" : m < 60 ? m + " min ago" : Math.round(m / 60) + " hr ago"; }
+function buildOdo(v) {
+  $("odo").innerHTML = [...usd(v)].map((ch) => /\d/.test(ch)
+    ? `<span class="col"><span data-d="${ch}">${Array.from({ length: 20 }, (_, i) => `<b>${i % 10}</b>`).join("")}</span></span>`
+    : `<span class="sep">${ch}</span>`).join("");
+}
+function spin(instant) {
+  document.querySelectorAll("#odo .col > span").forEach((s, i) => { const d = +s.dataset.d; s.style.transition = instant ? "none" : ""; s.style.transitionDelay = instant ? "0ms" : i * 90 + "ms"; s.style.transform = `translateY(-${(10 + d)}em)`; });
+}
+function paintMeter() {
+  const frac = Math.min(1, raised / goal);
+  $("pct").textContent = (frac * 100).toFixed(frac > 0 && frac < .1 ? 1 : 0) + "%";
+  $("togo").textContent = usd(Math.max(0, goal - raised));
+  if (!meterShown) return;
+  if (Math.round(raised) !== lastShown) {
+    const first = lastShown < 0; buildOdo(raised);
+    requestAnimationFrame(() => requestAnimationFrame(() => spin(false)));
+    if (!first) { $("odo").classList.remove("bump"); void $("odo").offsetWidth; $("odo").classList.add("bump"); }
+    lastShown = Math.round(raised);
+  }
   const w = Math.max(frac * 100, raised ? 1.5 : 0);
   $("barFill").style.width = w + "%"; $("vanMini").style.left = Math.max(w, 3) + "%";
 }
-$("vanMini").style.left = "3%";
-
+function paintChain() {
+  const m = meterData; if (!m) return;
+  $("solTot").textContent = (+m.totalSol).toFixed(2); $("donN").textContent = m.count || 0;
+  const d = (m.donations || [])[m.donations.length - 1];
+  $("lastDon").innerHTML = d ? `Latest: ${(+d.sol).toFixed(2)} SOL, ${ago(d.time)} · <a href="https://solscan.io/tx/${d.sig}" target="_blank" rel="noopener">proof ↗</a>` : "Waiting for the first donation";
+  $("liveTxt").textContent = "Live · updated " + ago(m.updated);
+}
+async function loadMeter() {
+  try {
+    const r = await fetch(DATA_URL + "?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" });
+    if (!r.ok) return; const m = await r.json(); if (!(m && m.totalUsd >= 0)) return;
+    meterData = m; raised = Math.max(+m.totalUsd || 0, 0); paintMeter(); paintChain();
+  } catch {}
+}
+function showMeter() { if (meterShown) return; meterShown = true; paintMeter(); }
+buildOdo(0); $("vanMini").style.left = "3%"; paintMeter();
+loadMeter(); setInterval(loadMeter, 60000); setInterval(paintChain, 30000);
 
 /* ---------- video ---------- */
 if (C.VIDEO) {
