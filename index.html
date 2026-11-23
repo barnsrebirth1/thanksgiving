@@ -704,7 +704,7 @@ function paintMap() {
   mapDots.forEach((c, i) => { const on = i < n; if (on && !c.classList.contains("on")) { c.classList.add("on"); if (!first) c.classList.add("new"); } else if (!on) c.classList.remove("on", "new"); });
   if (first) countTo($("litN"), n); else countTo($("litN"), n, +$("litN").textContent.replace(/,/g, "") || 0);
   litNow = n;
-  const ls = $("litStat"); if (ls) ls.textContent = n.toLocaleString("en-US") + " / " + mapDots.length.toLocaleString("en-US");
+  const ls = $("litStat"); if (ls) ls.textContent = n.toLocaleString("en-US");
 }
 function countTo(el, to, from = 0) {
   const t0 = performance.now(), dur = 1200;
