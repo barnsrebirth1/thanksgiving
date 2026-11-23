@@ -2,20 +2,29 @@
 // and writes the running total to meter.json. Runs on GitHub Actions every 10 minutes.
 import fs from "node:fs";
 
-const RPC = process.env.HELIUS_RPC || "https://solana-rpc.publicnode.com";
+const RAW = (process.env.HELIUS_RPC || "").trim();
+const HELIUS = !RAW ? null : RAW.startsWith("http") ? RAW : "https://mainnet.helius-rpc.com/?api-key=" + RAW;
+const PUBLIC = "https://solana-rpc.publicnode.com";
+let RPC = HELIUS || PUBLIC;
 const RECIPIENT = "sYjZCNo1HgDpg4ajibL9sDgwyeJ8EeTpdWUhKEPr5K7";   // fee-sharing shareholder (100%) for the coin
 const DONATION = "AgqbtJ1Fv73DKbwfzk9282t2L3Xbev6AkwoKQExJG5De";    // donation account the fees are swept into
 const OUT = process.argv[2] || "meter.json";
 const SOL_MINT = "So11111111111111111111111111111111111111112";
 
+async function call(url, method, params) {
+  const r = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) });
+  const text = await r.text();
+  let j; try { j = JSON.parse(text); } catch { throw new Error(`HTTP ${r.status}: ${text.slice(0, 80)}`); }
+  if (j.error) throw new Error(JSON.stringify(j.error));
+  return j.result;
+}
 async function rpc(method, params, tries = 5) {
   for (let i = 0; i < tries; i++) {
-    try {
-      const r = await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) });
-      const j = await r.json();
-      if (j.error) throw new Error(JSON.stringify(j.error));
-      return j.result;
-    } catch (e) { if (i === tries - 1) throw e; await new Promise((s) => setTimeout(s, 800 * (i + 1))); }
+    try { return await call(RPC, method, params); }
+    catch (e) {
+      if (RPC !== PUBLIC && /HTTP (401|403)|Unauthorized|api key/i.test(e.message)) { console.log("Helius key rejected, using the public RPC instead"); RPC = PUBLIC; continue; }
+      if (i === tries - 1) throw e; await new Promise((s) => setTimeout(s, 800 * (i + 1)));
+    }
   }
 }
 async function solPrice() {
