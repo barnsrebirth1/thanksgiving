@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thanksgiving Coin ($THANKS) · Leave the porch light on</title>
+<meta name="description" content="Nobody should eat alone this Thanksgiving. $THANKS sends its creator fees to Meals on Wheels America through donate.gg. Goal: $25,000 by Thanksgiving dinner.">
+<meta name="theme-color" content="#0d1424">
+<link rel="icon" type="image/png" href="assets/logo-64.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<style>
+@font-face { font-family: "Fraunces"; src: url(assets/fonts/fraunces.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Fraunces"; src: url(assets/fonts/fraunces-italic.woff2) format("woff2"); font-weight: 100 900; font-style: italic; font-display: swap; }
+@font-face { font-family: "Inter"; src: url(assets/fonts/inter-var.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "DM Mono"; src: url(assets/fonts/dmmono.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+
+:root {
+  --night: #0d1424; --navy: #131d33; --ink: #1b2742; --line: rgba(247,236,219,.12); --line2: rgba(247,236,219,.22);
+  --cream: #f7ecdb; --paper: #fbf4e8; --dim: rgba(247,236,219,.62);
+  --amber: #ffb547; --glow: #ffd68c; --ember: #ef7b3b; --plum: #3a2a4d; --sage: #a3b79a; --cran: #a8324f;
+  --serif: "Fraunces", Georgia, serif; --sans: "Inter", system-ui, sans-serif; --mono: "DM Mono", ui-monospace, monospace;
+  --bg: var(--night);
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--cream); font-family: var(--sans); font-size: 16px; line-height: 1.55; transition: background-color .8s ease; overflow-x: hidden; }
+body.lock { overflow: hidden; }
+a { color: inherit; }
+::selection { background: var(--amber); color: var(--night); }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.label { font-family: var(--mono); font-size: 11.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--amber); display: flex; align-items: center; gap: 12px; }
+.label i { width: 34px; height: 1px; background: currentColor; opacity: .6; }
+.label b { font-weight: 400; color: var(--dim); }
+h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(38px, 6vw, 84px); line-height: .98; letter-spacing: -.025em; margin: 16px 0 0; font-variation-settings: "SOFT" 100, "WONK" 0; }
+h2 em, h1 em { font-style: italic; font-weight: 500; color: var(--amber); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 16px 26px; border-radius: 999px; font: 700 15px var(--sans); text-decoration: none; border: 1.5px solid var(--line2); color: var(--cream); background: transparent; cursor: pointer; transition: transform .2s, background .2s, border-color .2s, color .2s; }
+.btn:hover { transform: translateY(-2px); border-color: var(--amber); }
+.btn.main { background: var(--amber); color: var(--night); border-color: var(--amber); box-shadow: 0 10px 40px rgba(255,181,71,.35); }
+.btn.main:hover { background: var(--glow); }
+.btn small { font-weight: 500; opacity: .7; }
+
+/* ---------- loader ---------- */
+#loader { position: fixed; inset: 0; z-index: 100; background: var(--night); display: grid; place-items: center; transition: clip-path 1.1s cubic-bezier(.77,0,.18,1); clip-path: circle(150% at 50% 46%); }
+#loader.out { clip-path: circle(0% at 50% 46%); }
+#loader .box { text-align: center; }
+#loader svg { width: 132px; height: 132px; overflow: visible; }
+#loader .draw { fill: none; stroke: var(--amber); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 330; stroke-dashoffset: 330; animation: draw 1.4s ease forwards; }
+#loader .win { opacity: 0; transition: opacity .5s, transform .5s; transform-origin: 60px 60px; transform: scale(.85); filter: drop-shadow(0 0 16px rgba(255,181,71,.6)); }
+#loader.lit .win { transform: none; }
+#loader.lit .win { opacity: 1; }
+#loader .halo { fill: url(#lgHalo); opacity: 0; transition: opacity .7s; }
+#loader.lit .halo { opacity: 1; }
+#loader p { font-family: var(--serif); font-style: italic; font-size: 22px; margin: 18px 0 6px; color: var(--cream); }
+#loader .pc { font-family: var(--mono); font-size: 12px; letter-spacing: .3em; color: var(--dim); }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- chrome ---------- */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; transition: background .4s, backdrop-filter .4s, border-color .4s; border-bottom: 1px solid transparent; }
+nav.solid { background: rgba(13,20,36,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: var(--line); }
+nav .wrap { display: flex; align-items: center; gap: 22px; height: 70px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--serif); font-weight: 600; font-size: 19px; letter-spacing: -.01em; }
+.logo img { width: 36px; height: 36px; display: block; }
+.links { display: flex; gap: 26px; margin-left: auto; font-family: var(--mono); font-size: 11.5px; letter-spacing: .18em; text-transform: uppercase; }
+.links a { text-decoration: none; color: var(--dim); transition: color .2s; }
+.links a:hover { color: var(--amber); }
+.ca { display: inline-flex; align-items: center; gap: 8px; font: 500 12px var(--mono); padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line2); background: rgba(0,0,0,.2); color: var(--cream); cursor: pointer; max-width: 210px; }
+.ca span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ca b { color: var(--amber); font-weight: 500; }
+.xbtn { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--cream); color: var(--night); flex: none; }
+.xbtn svg { width: 16px; height: 16px; }
+#progress { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); width: 2px; height: 160px; background: var(--line); z-index: 40; border-radius: 2px; }
+#progress i { position: absolute; left: 0; top: 0; width: 100%; background: var(--amber); border-radius: 2px; height: 0; }
+#progress b { position: absolute; left: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--glow); box-shadow: 0 0 12px 4px rgba(255,181,71,.7); top: 0; }
+#cursorGlow { position: fixed; left: 0; top: 0; width: 420px; height: 420px; margin: -210px 0 0 -210px; border-radius: 50%; pointer-events: none; z-index: 1; background: radial-gradient(circle, rgba(255,181,71,.13), transparent 62%); mix-blend-mode: screen; opacity: 0; transition: opacity .4s; }
+
+/* ---------- hero ---------- */
+.hero { position: relative; min-height: 100vh; min-height: 100svh; padding: 110px 0 40px; display: flex; flex-direction: column; overflow: hidden;
+  background: linear-gradient(180deg, #1a1b38 0%, #3a2a4d 34%, #8a4552 62%, #e08452 86%, #f2a65e 100%); }
+.hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 140px; background: linear-gradient(180deg, transparent, var(--night)); pointer-events: none; }
+.hero .wrap { position: relative; z-index: 2; flex: 1; display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: center; }
+.hero h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(44px, 6.1vw, 96px); line-height: .94; letter-spacing: -.035em; margin: 20px 0 0; font-variation-settings: "SOFT" 100; }
+.hero h1 .ln { display: block; overflow: hidden; padding-bottom: .06em; white-space: nowrap; }
+.hero h1 .ln > span { display: inline-block; transform: translateY(110%); transition: transform 1.1s cubic-bezier(.2,.8,.2,1); }
+.ready .hero h1 .ln > span { transform: none; }
+.hero h1 .ln:nth-child(2) > span { transition-delay: .1s; } .hero h1 .ln:nth-child(3) > span { transition-delay: .2s; } .hero h1 .ln:nth-child(4) > span { transition-delay: .3s; }
+.fade { opacity: 0; transform: translateY(18px); transition: opacity .9s ease, transform .9s ease; }
+.ready .fade { opacity: 1; transform: none; }
+.ready .fade.d1 { transition-delay: .45s; } .ready .fade.d2 { transition-delay: .6s; } .ready .fade.d3 { transition-delay: .75s; }
+.lede { max-width: 470px; font-size: 18px; color: rgba(247,236,219,.86); margin: 26px 0 0; }
+.lede b { color: var(--glow); font-weight: 600; }
+.goal { display: inline-flex; margin-top: 26px; border: 1px solid rgba(255,214,140,.35); border-radius: 20px; background: rgba(13,20,36,.28); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.goal > div { padding: 14px 22px; }
+.goal > div + div { border-left: 1px solid rgba(255,214,140,.25); }
+.goal span { display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--glow); }
+.goal b { font-family: var(--serif); font-weight: 600; font-size: 34px; line-height: 1.1; margin-right: 8px; }
+.goal em { font-style: normal; font-size: 13.5px; color: rgba(247,236,219,.8); }
+@media (max-width: 560px) { .goal { display: flex; } .goal > div { padding: 12px 14px; } .goal b { font-size: 28px; display: block; } }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.scene { position: relative; width: 100%; aspect-ratio: 6/5; }
+.scene svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; -webkit-mask-image: radial-gradient(ellipse 58% 60% at 50% 52%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 58% 60% at 50% 52%, #000 62%, transparent 100%); }
+.pin > .wrap { width: 100%; }
+.layer { transition: transform .25s ease-out; will-change: transform; }
+.twinkle { animation: tw 3s ease-in-out infinite; }
+@keyframes tw { 50% { opacity: .25; } }
+.steam path { stroke: rgba(255,255,255,.75); stroke-width: 3; fill: none; stroke-linecap: round; stroke-dasharray: 6 40; animation: steam 2.4s linear infinite; }
+.steam path:nth-child(2) { animation-delay: -.8s; } .steam path:nth-child(3) { animation-delay: -1.6s; }
+@keyframes steam { from { stroke-dashoffset: 46; opacity: 0; } 30% { opacity: 1; } to { stroke-dashoffset: 0; opacity: 0; } }
+.flicker { animation: fl 4s ease-in-out infinite; }
+@keyframes fl { 0%,100% { opacity: 1; } 45% { opacity: .82; } 50% { opacity: .95; } 70% { opacity: .88; } }
+#van { transform: translateX(-340px); transition: transform 2.2s cubic-bezier(.2,.75,.25,1) .5s; }
+.ready #van { transform: none; }
+.heroFoot { position: relative; z-index: 2; margin-top: 30px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.count .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--glow); margin-bottom: 8px; }
+.count .digits { display: flex; gap: 18px; }
+.count .digits div { text-align: center; }
+.count .digits b { display: block; font-family: var(--serif); font-weight: 600; font-size: clamp(34px, 4vw, 50px); line-height: 1; font-variant-numeric: tabular-nums; }
+.count .digits span { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); }
+.scrollHint { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); display: flex; align-items: center; gap: 10px; }
+.scrollHint i { width: 1px; height: 38px; background: linear-gradient(var(--amber), transparent); animation: drip 1.8s ease-in-out infinite; transform-origin: top; }
+@keyframes drip { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+/* ---------- sections ---------- */
+section { position: relative; padding: 130px 0; }
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 1s ease, transform 1s cubic-bezier(.2,.8,.2,1); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* meter */
+.meter { margin-top: 50px; background: linear-gradient(180deg, var(--paper), #f3e4cc); color: var(--night); border-radius: 34px; padding: clamp(26px, 4vw, 54px); box-shadow: 0 40px 120px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.08) inset; position: relative; overflow: hidden; }
+.meter::before { content: ""; position: absolute; right: -120px; top: -120px; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(255,181,71,.45), transparent 65%); }
+.meter .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; }
+.meter .label { color: var(--cran); }
+.pill { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(13,20,36,.2); border-radius: 999px; padding: 7px 12px; display: inline-flex; align-items: center; gap: 8px; }
+.pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 0 0 rgba(239,123,59,.6); animation: ping 1.8s infinite; }
+@keyframes ping { 70% { box-shadow: 0 0 0 9px rgba(239,123,59,0); } 100% { box-shadow: 0 0 0 0 rgba(239,123,59,0); } }
+.odo { display: flex; align-items: flex-start; justify-content: center; font-family: var(--serif); font-weight: 700; font-size: clamp(64px, 13vw, 190px); line-height: 1; letter-spacing: -.04em; margin: 34px 0 6px; height: 1em; overflow: hidden; position: relative; font-variant-numeric: tabular-nums; }
+.odo .col { display: inline-block; height: 1em; overflow: hidden; }
+.odo .col span { display: block; transition: transform 2.2s cubic-bezier(.2,.9,.25,1); }
+.odo .col span b { display: block; height: 1em; font-weight: 700; }
+.odo .sep { display: inline-block; }
+.meter .sub { text-align: center; font-size: clamp(16px, 1.8vw, 20px); color: rgba(13,20,36,.72); position: relative; }
+.meter .sub b { color: var(--night); }
+.road { position: relative; margin: 44px 0 10px; height: 54px; }
+.road .track { position: absolute; left: 0; right: 0; top: 38px; height: 8px; border-radius: 8px; background: rgba(13,20,36,.1); overflow: hidden; }
+.road .track i { position: absolute; inset: 0; width: 0; background: linear-gradient(90deg, var(--ember), var(--amber)); border-radius: 8px; transition: width 2.2s cubic-bezier(.2,.9,.25,1); }
+.road .dash { position: absolute; left: 0; right: 0; top: 41px; height: 2px; background: repeating-linear-gradient(90deg, rgba(13,20,36,.25) 0 10px, transparent 10px 22px); }
+.road .vanMini { position: absolute; top: 0; left: 0; width: 64px; margin-left: -32px; transition: left 2.2s cubic-bezier(.2,.9,.25,1); }
+.road .flag { position: absolute; right: -4px; top: 6px; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: rgba(13,20,36,.55); text-align: right; }
+.mstats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(13,20,36,.12); margin-top: 26px; }
+.mstats div { padding: 22px 18px 4px; border-right: 1px solid rgba(13,20,36,.12); }
+.mstats div:last-child { border-right: 0; }
+.mstats span { font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: rgba(13,20,36,.55); display: block; }
+.mstats b { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 3vw, 38px); }
+.flow { margin-top: 34px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; position: relative; }
+.flow div { background: rgba(13,20,36,.05); border: 1px solid rgba(13,20,36,.1); border-radius: 18px; padding: 18px 18px 16px; position: relative; }
+.flow div:not(:last-child)::after { content: "→"; position: absolute; right: -14px; top: 50%; transform: translate(50%, -50%); font-size: 18px; color: var(--ember); z-index: 2; }
+.flow em { font-style: normal; font-family: var(--mono); font-size: 11px; color: var(--cran); letter-spacing: .14em; }
+.flow b { display: block; font-size: 16.5px; margin: 4px 0 2px; }
+.flow span { font-size: 13.5px; color: rgba(13,20,36,.65); }
+.mnote { margin-top: 20px; font-family: var(--mono); font-size: 11.5px; line-height: 1.7; color: rgba(13,20,36,.6); background: rgba(255,181,71,.18); border-radius: 14px; padding: 12px 16px; }
+
+/* marquee */
+.marquee { overflow: hidden; background: var(--amber); color: var(--night); padding: 22px 0; transform: rotate(-1.6deg) scale(1.04); margin: 20px 0; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.marquee .row { display: flex; width: max-content; gap: 34px; font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(30px, 4.2vw, 58px); line-height: 1.1; white-space: nowrap; will-change: transform; }
+.marquee .row span { display: inline-flex; align-items: center; gap: 34px; }
+.marquee .row svg { width: .62em; height: .62em; flex: none; }
+
+/* story */
+.story p.big { font-family: var(--serif); font-weight: 500; font-size: clamp(30px, 4.4vw, 62px); line-height: 1.14; letter-spacing: -.02em; margin: 34px 0 0; max-width: 1080px; }
+.story .w { color: rgba(247,236,219,.16); transition: color .35s, text-shadow .35s; }
+.story .w.on { color: var(--cream); }
+.story .w.hot.on { color: var(--amber); text-shadow: 0 0 28px rgba(255,181,71,.55); font-style: italic; }
+
+/* street (pinned stats) */
+.street { height: 330vh; padding: 0; }
+.houses g.h { cursor: pointer; }
+.tapHint { text-align: center; font-family: var(--mono); font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); margin-top: 16px; }
+.street .pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.street .head { display: flex; justify-content: space-between; align-items: center; }
+.street .head .n { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; color: var(--dim); }
+.street .head .n b { color: var(--amber); font-weight: 400; }
+.statBox { position: relative; height: clamp(250px, 40vh, 360px); margin: 2vh 0 1vh; }
+.stat { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; opacity: 0; transform: translateY(30px); transition: opacity .6s, transform .6s; pointer-events: none; }
+.stat.on { opacity: 1; transform: none; }
+.stat.past { opacity: 0; transform: translateY(-30px); }
+.stat .num { font-family: var(--serif); font-weight: 600; font-size: clamp(54px, 8.4vw, 130px); line-height: 1; letter-spacing: -.04em; color: var(--cream); font-variant-numeric: tabular-nums; }
+.stat .num em { font-style: italic; color: var(--amber); font-weight: 600; }
+.stat p { font-size: clamp(17px, 2vw, 24px); max-width: 620px; margin: 16px 0 6px; color: rgba(247,236,219,.86); }
+.stat small { font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim); }
+.houses { width: 100%; height: clamp(130px, 24vh, 220px); display: block; }
+@media (max-width: 700px) { .houses { width: 150%; margin-left: -25%; height: 190px; } }
+.houses .lit { transition: fill .6s, filter .6s; }
+.houses .on .lit { fill: var(--amber); filter: url(#winGlow); }
+.houses .spill { opacity: 0; transition: opacity .8s; }
+.houses .on .spill { opacity: 1; }
+
+/* watch */
+.watch .frame { margin-top: 44px; border-radius: 30px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: var(--ink); box-shadow: 0 40px 120px rgba(0,0,0,.55); border: 1px solid var(--line); }
+.watch video { width: 100%; height: 100%; display: block; object-fit: cover; }
+.watch .soon { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; background: radial-gradient(ellipse at 50% 60%, rgba(255,181,71,.25), transparent 60%), linear-gradient(180deg, #1a1b38, #3a2a4d 60%, #8a4552); }
+.watch .soon b { display: block; font-family: var(--serif); font-size: clamp(28px, 4vw, 54px); font-weight: 600; font-style: italic; }
+.watch .soon span { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--glow); }
+.play { position: absolute; left: 50%; top: 50%; width: 96px; height: 96px; margin: -48px; border-radius: 50%; border: 0; background: var(--amber); color: var(--night); display: grid; place-items: center; cursor: pointer; box-shadow: 0 0 0 14px rgba(255,181,71,.2), 0 20px 60px rgba(0,0,0,.4); transition: transform .2s; }
+.play:hover { transform: scale(1.06); }
+
+/* how (horizontal drive) */
+.how { height: 420vh; padding: 0; }
+.how .pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.how .intro { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: end; }
+.how .intro p { color: var(--dim); font-size: 17px; max-width: 440px; margin: 0; }
+.drive { position: relative; margin-top: 6vh; }
+.drive .track { display: flex; gap: 26px; will-change: transform; padding-left: max(24px, calc((100vw - 1200px) / 2 + 24px)); }
+.card { flex: none; width: min(380px, 78vw); min-height: 300px; border-radius: 28px; padding: 28px; background: var(--ink); border: 1px solid var(--line); position: relative; overflow: hidden; transition: background .5s, border-color .5s, transform .5s; display: flex; flex-direction: column; }
+.card .no { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 76px; line-height: 1; color: transparent; -webkit-text-stroke: 1.2px rgba(247,236,219,.5); }
+.card b { font-family: var(--serif); font-weight: 600; font-size: 32px; letter-spacing: -.01em; margin-top: auto; display: block; }
+.card span { color: var(--dim); font-size: 15px; margin-top: 8px; display: block; }
+.card .ic { position: absolute; right: 24px; top: 26px; width: 44px; height: 44px; color: var(--amber); }
+.card.on { background: linear-gradient(160deg, #2a3557, var(--ink)); border-color: rgba(255,181,71,.55); }
+.card.on .no { -webkit-text-stroke-color: var(--amber); }
+.roadLine { position: relative; margin: 34px 24px 0; height: 60px; max-width: 1152px; }
+@media (min-width: 1200px) { .roadLine { margin-left: auto; margin-right: auto; } }
+.roadLine .asphalt { position: absolute; left: 0; right: 0; top: 40px; height: 2px; background: repeating-linear-gradient(90deg, var(--line2) 0 12px, transparent 12px 24px); }
+.roadLine .done { position: absolute; left: 0; top: 40px; height: 2px; background: var(--amber); width: 0; }
+.roadLine .stop { position: absolute; top: 46px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim); transform: translateX(-50%); padding-top: 10px; transition: color .3s; }
+.roadLine .stop.on { color: var(--amber); }
+.roadLine .stop::before { content: ""; position: absolute; left: 50%; top: -9px; width: 9px; height: 9px; border-radius: 50%; background: var(--navy); border: 1.5px solid var(--line2); transform: translateX(-50%); }
+.roadLine .stop.on::before { background: var(--amber); border-color: var(--amber); }
+.roadLine .car { position: absolute; top: 0; width: 70px; margin-left: -35px; left: 0; }
+
+/* token */
+.token .grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 50px; align-items: center; margin-top: 10px; }
+.token p.lead { font-size: 18px; color: rgba(247,236,219,.8); max-width: 480px; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; margin-top: 26px; border-top: 1px solid var(--line); }
+.facts div { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.facts div:nth-child(odd) { padding-right: 16px; }
+.facts span { font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim); display: block; }
+.facts b { font-family: var(--serif); font-size: 22px; font-weight: 600; }
+.caCard { background: var(--paper); color: var(--night); border-radius: 30px; padding: 34px; transform: rotate(1.6deg); box-shadow: 0 40px 100px rgba(0,0,0,.5); transition: transform .5s; }
+.caCard:hover { transform: rotate(0); }
+.caCard .label { color: var(--cran); }
+.caCard code { display: block; font: 500 clamp(15px, 1.7vw, 21px)/1.45 var(--mono); word-break: break-all; margin: 22px 0 26px; min-height: 2.9em; }
+.caCard .row { display: flex; gap: 10px; flex-wrap: wrap; }
+.caCard .btn { color: var(--night); border-color: rgba(13,20,36,.25); }
+.caCard .btn.main { color: var(--night); }
+.caCard small { display: block; margin-top: 18px; font-size: 13px; color: rgba(13,20,36,.6); }
+
+/* receipts */
+.rcList { margin-top: 36px; border-top: 1px solid var(--line); }
+.rc { display: grid; grid-template-columns: 130px 1fr auto auto; gap: 16px; align-items: center; padding: 18px 4px; border-bottom: 1px solid var(--line); }
+.rc .d { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.rc .amt { font-family: var(--serif); font-size: 24px; font-weight: 600; color: var(--amber); }
+.rc a { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.empty { padding: 40px 10px; text-align: center; color: var(--dim); font-family: var(--serif); font-style: italic; font-size: 22px; }
+
+/* finale */
+.finale { text-align: center; padding: 160px 0 120px; overflow: hidden; }
+.finale h2 { font-size: clamp(48px, 9vw, 140px); }
+.finale .bulb { width: 150px; height: 150px; margin: 0 auto 30px; border-radius: 50%; box-shadow: 0 0 80px 20px rgba(255,181,71,.35); animation: breathe 3.5s ease-in-out infinite; }
+.finale .bulb img { width: 100%; height: 100%; display: block; }
+@keyframes breathe { 50% { box-shadow: 0 0 110px 34px rgba(255,181,71,.5); } }
+.finale .cta { justify-content: center; }
+
+footer { border-top: 1px solid var(--line); padding: 50px 0 40px; font-size: 14px; color: var(--dim); }
+footer .cols { display: grid; grid-template-columns: 1fr 1.3fr; gap: 50px; }
+footer h4 { font-family: var(--mono); font-weight: 400; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--amber); margin: 0 0 14px; }
+footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+footer a { text-decoration: underline; text-decoration-color: rgba(255,181,71,.4); text-underline-offset: 3px; }
+footer .base { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+
+#toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 30px); opacity: 0; background: var(--amber); color: var(--night); font-weight: 700; padding: 12px 20px; border-radius: 999px; z-index: 90; transition: all .3s; pointer-events: none; }
+#toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 960px) {
+  .links { display: none; }
+  .ca { margin-left: auto; max-width: 150px; }
+  .hero .wrap { grid-template-columns: 1fr; gap: 0; }
+  .scene { max-width: 520px; margin: 10px auto 0; width: 100%; }
+  .hero { padding-top: 96px; }
+  .mstats div { padding: 16px 10px 2px; }
+  .mstats b { font-size: 22px; }
+  .mstats span { font-size: 9px; letter-spacing: .1em; }
+  .flow { grid-template-columns: 1fr; }
+  .flow div:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -14px; transform: translate(50%, 50%); }
+  .how .intro { grid-template-columns: 1fr; gap: 14px; }
+  .token .grid { grid-template-columns: 1fr; }
+  footer .cols { grid-template-columns: 1fr; gap: 30px; }
+  #progress { display: none; }
+  .rc { grid-template-columns: 1fr auto; }
+  .rc .note { grid-column: 1 / -1; order: 3; }
+}
+@media (max-width: 560px) {
+  .wrap { padding: 0 18px; }
+  section { padding: 96px 0; }
+  .logo b { display: none; }
+  .count .digits { gap: 12px; }
+  .heroFoot .scrollHint { display: none; }
+  .card { min-height: 260px; }
+  .roadLine .stop { font-size: 9px; letter-spacing: .1em; }
+}
+@media (hover: none) { #cursorGlow { display: none; } nav.solid { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(13,20,36,.94); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body class="lock">
+
+<!-- loader -->
+<div id="loader" aria-hidden="true">
+  <div class="box">
+    <svg viewBox="0 0 120 120">
+      <defs><radialGradient id="lgHalo"><stop offset="0" stop-color="#ffb547" stop-opacity=".55"/><stop offset="1" stop-color="#ffb547" stop-opacity="0"/></radialGradient></defs>
+      <circle class="halo" cx="60" cy="60" r="62"/>
+      <circle class="draw" cx="60" cy="60" r="52" transform="rotate(-90 60 60)"/>
+      <image class="win" href="assets/logo-192.png" x="6" y="6" width="108" height="108"/>
+    </svg>
+    <p id="ldText">Turning the porch light on</p>
+    <div class="pc" id="ldPc">000%</div>
+  </div>
+</div>
+
+<div id="cursorGlow"></div>
+<div id="progress"><i></i><b></b></div>
+<div id="toast"></div>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Thanksgiving Coin">
+      <img src="assets/logo-96.png" alt="" width="36" height="36">
+      <b>Thanksgiving Coin</b>
+    </a>
+    <div class="links"><a href="#meter">Meter</a><a href="#story">Why</a><a href="#how">How it works</a><a href="#token">Token</a></div>
+    <button class="ca" id="caBtn" type="button"><b>CA</b><span id="caText">Coming soon</span></button>
+    <a class="xbtn" id="xBtn" href="#" target="_blank" rel="noopener" aria-label="Follow on X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.8-6.3L6.4 22H3.3l7.3-8.3L1 2h6.3l4.4 5.8L18.9 2zm-1.1 18h1.7L6.3 3.9H4.5L17.8 20z"/></svg></a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top" data-bg="#0d1424">
+  <div class="wrap">
+    <div>
+      <div class="label fade"><i></i>Thanksgiving 2026 <b>· for Meals on Wheels America</b></div>
+      <h1><span class="ln"><span>Nobody should</span></span><span class="ln"><span>eat <em>alone</em></span></span><span class="ln"><span>this Thanksgiving.</span></span></h1>
+      <p class="lede fade d1"><b>$THANKS</b> sends its creator fees to Meals on Wheels America, the people who bring a hot meal and a friendly face to seniors who'd otherwise spend the holiday by themselves.</p>
+      <div class="cta fade d2">
+        <a class="btn main" id="buyBtn" href="#token">Buy $THANKS <small>· soon</small></a>
+        <a class="btn" href="#story">Watch the story</a>
+      </div>
+      <div class="goal fade d3"><div><span>Goal</span><b>$25,000</b><em>raised for Meals on Wheels America by Thanksgiving dinner</em></div><div><span>Takes roughly</span><b>$1M</b><em>market cap</em></div></div>
+    </div>
+    <div class="scene fade d1" id="scene">
+      <svg viewBox="0 0 600 500" aria-label="A volunteer delivering a Thanksgiving meal to a house with its porch light on">
+        <defs>
+          <radialGradient id="sun" cx="50%" cy="50%"><stop offset="0" stop-color="#ffd68c" stop-opacity=".9"/><stop offset=".4" stop-color="#ffb547" stop-opacity=".35"/><stop offset="1" stop-color="#ffb547" stop-opacity="0"/></radialGradient>
+          <radialGradient id="porch" cx="50%" cy="40%"><stop offset="0" stop-color="#ffd68c" stop-opacity=".95"/><stop offset="1" stop-color="#ffb547" stop-opacity="0"/></radialGradient>
+          <linearGradient id="winG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2a3"/><stop offset="1" stop-color="#ffab3d"/></linearGradient>
+          <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+        </defs>
+        <g class="layer" data-depth="6">
+          <circle cx="300" cy="330" r="260" fill="url(#sun)"/>
+          <g fill="#fff">
+            <circle class="twinkle" cx="80" cy="60" r="1.6"/><circle class="twinkle" cx="170" cy="30" r="1.2" style="animation-delay:-1s"/><circle class="twinkle" cx="420" cy="50" r="1.8" style="animation-delay:-2s"/>
+            <circle class="twinkle" cx="530" cy="90" r="1.3" style="animation-delay:-.5s"/><circle class="twinkle" cx="300" cy="20" r="1.1" style="animation-delay:-1.6s"/><circle class="twinkle" cx="40" cy="140" r="1.2" style="animation-delay:-2.4s"/>
+          </g>
+        </g>
+        <g class="layer" data-depth="12" fill="#3a2442">
+          <path d="M0 330 h70 v-60 l40-34 40 34 v60 h40 v-90 l46-40 46 40 v90 h30 V500 H0z" opacity=".75"/>
+          <path d="M420 330 v-70 l44-38 44 38 v70 h30 v-50 l30-26 32 26 V500 H400 V330z" opacity=".75"/>
+          <rect x="128" y="290" width="10" height="12" fill="#ffb547" opacity=".55"/><rect x="474" y="282" width="10" height="12" fill="#ffb547" opacity=".4"/>
+        </g>
+        <g class="layer" data-depth="22">
+          <!-- main house -->
+          <path d="M150 250 L300 140 L450 250 Z" fill="#21182e"/>
+          <rect x="170" y="240" width="260" height="190" fill="#2b2040"/>
+          <rect x="350" y="150" width="28" height="60" fill="#21182e"/>
+          <!-- lit window with table + one chair -->
+          <rect x="196" y="282" width="70" height="62" rx="4" fill="url(#winG)" class="flicker"/>
+          <rect x="196" y="282" width="70" height="62" rx="4" fill="#ffb547" opacity=".55" filter="url(#soft)" class="flicker"/>
+          <path d="M231 282v62M196 313h70" stroke="#2b2040" stroke-width="4"/>
+          
+          <!-- second window dark -->
+          <rect x="334" y="282" width="60" height="52" rx="4" fill="#1a1426"/>
+          <path d="M364 282v52M334 308h60" stroke="#2b2040" stroke-width="4"/>
+          <!-- door + porch light -->
+          <ellipse cx="300" cy="300" rx="70" ry="60" fill="url(#porch)" class="flicker"/>
+          <rect x="278" y="330" width="44" height="100" rx="4" fill="#5a2f37"/>
+          <rect x="282" y="334" width="36" height="92" rx="3" fill="#6d3a42"/>
+          <circle cx="312" cy="382" r="3" fill="#ffd68c"/>
+          <rect x="296" y="304" width="8" height="12" rx="2" fill="#ffe2a3"/>
+          <rect x="262" y="428" width="76" height="8" rx="2" fill="#1a1426"/>
+          <!-- wreath on door -->
+          <circle cx="300" cy="352" r="10" fill="none" stroke="#a3b79a" stroke-width="5"/><circle cx="300" cy="343" r="2.4" fill="#ef7b3b"/>
+        </g>
+        <g class="layer" data-depth="30">
+          <!-- volunteer with meal -->
+          <g transform="translate(242 360)">
+            <rect x="-14" y="16" width="30" height="52" rx="14" fill="#ef7b3b"/>
+            <circle cx="1" cy="4" r="13" fill="#c98a63"/>
+            <path d="M-12 0c2-12 24-14 27 0" fill="#2a1a14"/>
+            <rect x="8" y="30" width="34" height="18" rx="3" fill="#f7ecdb"/>
+            <rect x="8" y="30" width="34" height="5" rx="2" fill="#a8324f"/>
+            <g class="steam" transform="translate(15 0)"><path d="M3 26 c-6 -8 6 -12 0 -22"/><path d="M12 26 c-6 -8 6 -12 0 -22"/><path d="M21 26 c-6 -8 6 -12 0 -22"/></g>
+            <rect x="-10" y="66" width="9" height="14" rx="3" fill="#1a1426"/><rect x="5" y="66" width="9" height="14" rx="3" fill="#1a1426"/>
+          </g>
+          <!-- path -->
+          <path d="M0 470 Q300 440 600 470 V500 H0z" fill="#150f1f"/>
+        </g>
+        <g class="layer" data-depth="40">
+          <g id="van" transform="translate(0 0)">
+            <g transform="translate(384 386)">
+              <path d="M0 10 h120 a14 14 0 0 1 14 14 v42 h-134 z" fill="#f7ecdb"/>
+              <path d="M120 10 h26 l26 30 v26 h-38 z" fill="#efe1c9"/>
+              <path d="M126 16 h18 l18 22 h-36z" fill="#3a2a4d"/>
+              <rect x="0" y="44" width="172" height="6" fill="#ef7b3b"/>
+              <path d="M58 34c-5-3.5-8-6-8-9 0-2.2 1.7-4 3.9-4 1.6 0 2.9.8 4.1 2.3 1.2-1.5 2.5-2.3 4.1-2.3 2.2 0 3.9 1.8 3.9 4 0 3-3 5.5-8 9z" fill="#a8324f"/>
+              <circle cx="34" cy="68" r="13" fill="#150f1f"/><circle cx="34" cy="68" r="5" fill="#6b5a6e"/>
+              <circle cx="138" cy="68" r="13" fill="#150f1f"/><circle cx="138" cy="68" r="5" fill="#6b5a6e"/>
+              <rect x="166" y="48" width="8" height="6" rx="2" fill="#ffe2a3"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="wrap heroFoot fade d3">
+    <div class="count">
+      <div class="lbl">Until Thanksgiving dinner · Thu 26 Nov, 5pm ET</div>
+      <div class="digits"><div><b id="cd">0</b><span>days</span></div><div><b id="ch">00</b><span>hrs</span></div><div><b id="cm">00</b><span>min</span></div><div><b id="cs">00</b><span>sec</span></div></div>
+    </div>
+    <div class="scrollHint"><i></i>Scroll</div>
+  </div>
+</header>
+
+<!-- METER -->
+<section id="meter" data-bg="#0d1424">
+  <div class="wrap">
+    <div class="label reveal"><i></i>01 <b>· the meter</b></div>
+    <h2 class="reveal">Every dollar, <em>on the record.</em></h2>
+    <div class="meter reveal">
+      <div class="top"><div class="label"><i></i>Raised for Meals on Wheels America</div><div class="pill"><i></i>Deadline: Thanksgiving dinner</div></div>
+      <div class="odo" id="odo" aria-live="polite"></div>
+      <div class="sub">of a <b>$25,000</b> goal by Thanksgiving dinner</div>
+      <div class="road">
+        <div class="track"><i id="barFill"></i></div><div class="dash"></div>
+        <svg class="vanMini" id="vanMini" viewBox="0 0 64 34"><path d="M2 6h40a6 6 0 0 1 6 6v16H2z" fill="#0d1424"/><path d="M48 10h7l7 9v9H48z" fill="#1b2742"/><circle cx="14" cy="29" r="5" fill="#ef7b3b"/><circle cx="50" cy="29" r="5" fill="#ef7b3b"/><path d="M22 20c-2.2-1.6-3.6-2.7-3.6-4 0-1 .8-1.8 1.8-1.8.7 0 1.3.4 1.8 1 .5-.6 1.1-1 1.8-1 1 0 1.8.8 1.8 1.8 0 1.3-1.4 2.4-3.6 4z" fill="#ffb547"/></svg>
+        <div class="flag">$25K 🏁</div>
+      </div>
+      <div class="mstats">
+        <div><span>Of the goal</span><b id="pct">0%</b></div>
+        <div><span>Still to go</span><b id="togo">$25,000</b></div>
+        <div><span>Market cap target</span><b>≈ $1M</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="row" id="mq"></div></div>
+
+<!-- STORY -->
+<section class="story watch" id="story" data-bg="#0d1424">
+  <div class="wrap">
+    <div class="label reveal"><i></i>02 <b>· the story</b></div>
+    <h2 class="reveal">Pull up <em>a chair.</em></h2>
+    <div class="frame reveal" id="frame">
+      <div class="soon"><div><span>The story, in under a minute</span><b>Coming soon</b></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STREET (pinned stats) -->
+<section class="street" id="street" data-bg="#0a1020">
+  <div class="pin">
+    <div class="wrap">
+      <div class="head"><div class="label"><i></i>03 <b>· the quiet street</b></div><div class="n"><b id="sn">01</b> / 03</div></div>
+      <div class="statBox" id="stats">
+        <div class="stat"><div class="num" data-count="14000000">14,000,000</div><p>older Americans worry about having enough food.</p><small>Meals on Wheels America · facts &amp; data</small></div>
+        <div class="stat"><div class="num">1 <em>in</em> 4</div><p>Americans aged 60 and over live alone.</p><small>Meals on Wheels America · 2026 national snapshot</small></div>
+        <div class="stat"><div class="num" data-count="244000000">244,000,000</div><p>meals a year, delivered to 2.6 million seniors. That's where $THANKS fees go.</p><small>Meals on Wheels America · facts &amp; data</small></div>
+      </div>
+    </div>
+    <svg class="houses" id="houses" viewBox="0 0 1200 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+      <defs><filter id="winGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <radialGradient id="spillG"><stop offset="0" stop-color="#ffb547" stop-opacity=".45"/><stop offset="1" stop-color="#ffb547" stop-opacity="0"/></radialGradient></defs>
+    </svg>
+    <div class="tapHint">Scroll or tap a house</div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how" id="how" data-bg="#111a2e">
+  <div class="pin">
+    <div class="wrap intro">
+      <div><div class="label"><i></i>04 <b>· how it works</b></div><h2>From a trade<br>to a <em>doorstep.</em></h2></div>
+      <p>$THANKS has one job: turning trading into hot meals and company for seniors this Thanksgiving.</p>
+    </div>
+    <div class="drive">
+      <div class="track" id="track">
+        <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg><div class="no">01</div><b>Trade</b><span>Buy or sell $THANKS on pump.fun. Every trade earns creator fees.</span></div>
+        <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18M7 15h3"/></svg><div class="no">02</div><b>Creator fees</b><span>$THANKS is a pump.fun Charity Coin, so its creator fees go to charity automatically.</span></div>
+        <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><div class="no">03</div><b>donate.gg</b><span>donate.gg routes the money to Meals on Wheels America, minus its processing fee.</span></div>
+        <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 11l9-7 9 7v9H3z"/><path d="M10 20v-5h4v5"/></svg><div class="no">04</div><b>A knock at the door</b><span>Local volunteers deliver a hot meal and a friendly face.</span></div>
+      </div>
+      <div class="roadLine" id="roadLine">
+        <div class="asphalt"></div><div class="done" id="roadDone"></div>
+        <svg class="car" id="roadCar" viewBox="0 0 70 38"><path d="M2 6h44a6 6 0 0 1 6 6v18H2z" fill="#f7ecdb"/><path d="M52 10h8l8 10v10H52z" fill="#efe1c9"/><path d="M54 13h5l6 7H54z" fill="#3a2a4d"/><rect x="2" y="22" width="66" height="3" fill="#ef7b3b"/><circle cx="15" cy="31" r="6" fill="#0d1424"/><circle cx="55" cy="31" r="6" fill="#0d1424"/><path d="M24 18c-2.2-1.6-3.6-2.7-3.6-4 0-1 .8-1.8 1.8-1.8.7 0 1.3.4 1.8 1 .5-.6 1.1-1 1.8-1 1 0 1.8.8 1.8 1.8 0 1.3-1.4 2.4-3.6 4z" fill="#a8324f"/></svg>
+        <div class="stop" style="left:0%">Trade</div><div class="stop" style="left:33.3%">Fees</div><div class="stop" style="left:66.6%">donate.gg</div><div class="stop" style="left:100%">Doorstep</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOKEN -->
+<section class="token" id="token" data-bg="#0d1424">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <div class="label reveal"><i></i>05 <b>· the coin</b></div>
+        <h2 class="reveal">One coin.<br><em>One table.</em></h2>
+        <p class="lead reveal">$THANKS is a community memecoin on Solana with a single purpose: getting hot meals and company to seniors this Thanksgiving.</p>
+        <div class="facts reveal">
+          <div><span>Ticker</span><b>$THANKS</b></div><div><span>Network</span><b>Solana · pump.fun</b></div>
+          <div><span>Fees go to</span><b>Meals on Wheels America</b></div><div><span>Goal</span><b>$25K by Thursday</b></div>
+        </div>
+      </div>
+      <div class="caCard reveal">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div class="label"><i></i>Contract address</div><img src="assets/logo-96.png" alt="" width="54" height="54"></div>
+        <code id="caText2">Coming soon</code>
+        <div class="row"><button class="btn main" id="copyCa" type="button">Copy CA</button><a class="btn" id="xBtn2" href="#" target="_blank" rel="noopener">Follow on X</a></div>
+        <small>Only trust the address posted here and on our X account. We'll never DM you.</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINALE -->
+<section class="finale" data-bg="#0d1424">
+  <div class="wrap">
+    <div class="bulb reveal"><img src="assets/logo-192.png" alt="Thanksgiving Coin logo"></div>
+    <h2 class="reveal">Leave the <em>porch light</em> on.</h2>
+    <div class="cta reveal" style="margin-top:36px"><a class="btn main" id="buyBtn2" href="#token">Buy $THANKS</a><a class="btn" id="xBtn3" href="#" target="_blank" rel="noopener">Follow on X</a></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Sources</h4>
+        <ul>
+          <li><a href="https://www.mealsonwheelsamerica.org/facts" target="_blank" rel="noopener">Meals on Wheels America: facts and data</a></li>
+          <li><a href="https://www.mealsonwheelsamerica.org/wp-content/uploads/2026/01/The-Issue-2026-National-Snapshot_Fact-Sheet_Jan2026.pdf" target="_blank" rel="noopener">Meals on Wheels America: 2026 national snapshot</a></li>
+          <li><a href="https://www.donate.gg/charity-coins" target="_blank" rel="noopener">donate.gg: Charity Coins</a></li>
+          <li><a id="charityLink" href="#" target="_blank" rel="noopener">mealsonwheelsamerica.org</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Note</h4>
+        <p style="margin:0">An independent community project, not affiliated with Meals on Wheels America, donate.gg or pump.fun. Memecoins are risky, so only buy what you're happy to lose.</p>
+      </div>
+    </div>
+    <div class="base"><span>© 2026 Thanksgiving Coin</span><span>Made with warm hands on Solana</span><a href="#top" style="text-decoration:none">Back to top ↑</a></div>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script>
+(() => {
+const C = window.TG_CONFIG || {};
+const $ = (id) => document.getElementById(id);
+const usd = (n) => "$" + Math.round(n).toLocaleString("en-US");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const touch = matchMedia("(hover: none)").matches;
+const toast = (t) => { const e = $("toast"); e.textContent = t; e.classList.add("on"); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove("on"), 1600); };
+
+/* ---------- links + CA ---------- */
+["xBtn", "xBtn2", "xBtn3"].forEach((id) => ($(id).href = C.X_URL || "https://x.com/"));
+$("charityLink").href = C.CHARITY_URL || "https://www.mealsonwheelsamerica.org/";
+function copyCA() { if (!C.CA) { toast("CA drops at launch"); return; } navigator.clipboard?.writeText(C.CA).then(() => toast("CA copied"), () => toast(C.CA)); }
+if (C.CA) {
+  $("caText").textContent = C.CA; $("caText2").textContent = C.CA;
+  [$("buyBtn"), $("buyBtn2")].forEach((b) => { b.href = "https://pump.fun/coin/" + C.CA; b.target = "_blank"; b.rel = "noopener"; b.textContent = "Buy $THANKS"; });
+}
+$("caBtn").onclick = copyCA; $("copyCa").onclick = copyCA;
+
+/* ---------- loader ---------- */
+const loader = $("loader");
+let pct = 0, done = false; const t0 = performance.now(), MIN = reduce ? 200 : 1700;
+const fontsReady = (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => (done = true));
+setTimeout(() => (done = true), 3500);
+function ld() {
+  const t = performance.now() - t0, target = done ? 100 : 88;
+  pct += (Math.min(target, (t / MIN) * 100) - pct) * .12;
+  if (done && t > MIN) pct = Math.min(100, pct + 2.2);
+  $("ldPc").textContent = String(Math.floor(pct)).padStart(3, "0") + "%";
+  if (pct >= 99.5) { $("ldPc").textContent = "100%"; finishLoad(); return; }
+  requestAnimationFrame(ld);
+}
+function finishLoad() {
+  loader.classList.add("lit"); $("ldText").textContent = "Come on in";
+  setTimeout(() => { loader.classList.add("out"); document.body.classList.remove("lock"); document.body.classList.add("ready"); setTimeout(() => loader.remove(), 1200); onScroll(); }, reduce ? 50 : 650);
+}
+requestAnimationFrame(ld);
+
+/* ---------- countdown ---------- */
+const end = new Date(C.DEADLINE || "2026-11-26T22:00:00Z").getTime();
+function tick() {
+  const s = Math.max(0, Math.floor((end - Date.now()) / 1000));
+  $("cd").textContent = Math.floor(s / 86400); $("ch").textContent = String(Math.floor(s % 86400 / 3600)).padStart(2, "0");
+  $("cm").textContent = String(Math.floor(s % 3600 / 60)).padStart(2, "0"); $("cs").textContent = String(s % 60).padStart(2, "0");
+}
+tick(); setInterval(tick, 1000);
+
+/* ---------- meter (odometer) ---------- */
+const raised = +C.RAISED_USD || 0;
+const goal = C.GOAL_USD || 25000, frac = Math.min(1, raised / goal);
+$("pct").textContent = (frac * 100).toFixed(frac > 0 && frac < .1 ? 1 : 0) + "%";
+$("togo").textContent = usd(Math.max(0, goal - raised));
+const odoStr = usd(raised);
+$("odo").innerHTML = [...odoStr].map((ch) => /\d/.test(ch)
+  ? `<span class="col"><span data-d="${ch}">${Array.from({ length: 20 }, (_, i) => `<b>${i % 10}</b>`).join("")}</span></span>`
+  : `<span class="sep">${ch}</span>`).join("");
+let meterShown = false;
+function showMeter() {
+  if (meterShown) return; meterShown = true;
+  document.querySelectorAll("#odo .col > span").forEach((s, i) => { const d = +s.dataset.d; s.style.transitionDelay = i * 90 + "ms"; s.style.transform = `translateY(-${(10 + d)}em)`; });
+  const w = Math.max(frac * 100, raised ? 1.5 : 0);
+  $("barFill").style.width = w + "%"; $("vanMini").style.left = Math.max(w, 3) + "%";
+}
+$("vanMini").style.left = "3%";
+
+
+/* ---------- video ---------- */
+if (C.VIDEO) {
+  $("frame").innerHTML = `<video id="vid" src="${C.VIDEO}" ${C.VIDEO_POSTER ? `poster="${C.VIDEO_POSTER}"` : ""} playsinline preload="metadata"></video><button class="play" id="play" aria-label="Play the video"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l14 8-14 8z"/></svg></button>`;
+  $("play").onclick = () => { const v = $("vid"); v.controls = true; v.play(); $("play").remove(); };
+}
+
+/* ---------- marquee ---------- */
+const heart = `<svg viewBox="0 0 24 24"><path d="M12 21s-8-5-8-11.2A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8 2.8C20 16 12 21 12 21z" fill="#a8324f"/></svg>`;
+const words = ["A hot meal", "A knock at the door", "A friendly face", "$THANKS", "Nobody eats alone"];
+const chunk = words.map((w) => `<span>${w}${heart}</span>`).join("");
+$("mq").innerHTML = chunk + chunk + chunk + chunk;
+let mqX = 0, lastY = scrollY, vel = 0;
+
+
+/* ---------- street houses ---------- */
+const hs = $("houses"), NS = "http://www.w3.org/2000/svg";
+const houses = [];
+const H = [[150, 250, 150], [475, 250, 175], [800, 250, 150]];
+H.forEach(([x, w, h], i) => {
+  const g = document.createElementNS(NS, "g"), base = 240, top = base - h; g.setAttribute("class", "h"); g.addEventListener("click", () => goStat(i === curStat ? (i + 1) % H.length : i));
+  g.innerHTML = `<ellipse class="spill" cx="${x + w / 2}" cy="${base - 6}" rx="${w * .9}" ry="26" fill="url(#spillG)"/>
+    <path d="M${x - 8} ${top + 4} L${x + w / 2} ${top - 46} L${x + w + 8} ${top + 4}z" fill="#1b2742"/>
+    <rect x="${x}" y="${top}" width="${w}" height="${h}" fill="#16213a"/>
+    <rect class="lit" x="${x + 18}" y="${top + 24}" width="${w * .26}" height="${w * .22}" rx="3" fill="#0e1628"/>
+    <rect class="lit" x="${x + w - 18 - w * .26}" y="${top + 24}" width="${w * .26}" height="${w * .22}" rx="3" fill="#0e1628"/>
+    <rect x="${x + w / 2 - 13}" y="${base - 46}" width="26" height="46" rx="3" fill="#0e1628"/>
+    <circle class="lit" cx="${x + w / 2 + 20}" cy="${base - 40}" r="4" fill="#0e1628"/>`;
+  hs.append(g); houses.push(g);
+});
+const ground = document.createElementNS(NS, "rect"); ground.setAttribute("x", 0); ground.setAttribute("y", 238); ground.setAttribute("width", 1200); ground.setAttribute("height", 4); ground.setAttribute("fill", "#1b2742"); hs.append(ground);
+const stats = [...document.querySelectorAll("#stats .stat")];
+let curStat = -1;
+function countUp(el) {
+  if (el._done) return; el._done = true; const target = +el.dataset.count, t0 = performance.now(), dur = 1300;
+  const f = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(target * e).toLocaleString("en-US"); if (k < 1) requestAnimationFrame(f); };
+  if (reduce) { el.textContent = target.toLocaleString("en-US"); return; } requestAnimationFrame(f);
+}
+function setStat(i) {
+  if (i === curStat) return; curStat = i;
+  stats.forEach((s, j) => { s.classList.toggle("on", j === i); s.classList.toggle("past", j < i); });
+  houses.forEach((h, j) => h.classList.toggle("on", j <= i));
+  $("sn").textContent = String(i + 1).padStart(2, "0");
+  stats[i].querySelectorAll("[data-count]").forEach(countUp);
+}
+setStat(0);
+function goStat(i) {
+  const st = $("street"), top = scrollY + st.getBoundingClientRect().top, span = st.offsetHeight - innerHeight;
+  scrollTo({ top: top + span * (i + .5) / stats.length, behavior: "smooth" });
+}
+
+/* ---------- reveal ---------- */
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); if (e.target.classList.contains("meter")) setTimeout(showMeter, 300); io.unobserve(e.target); } }), { threshold: .18 });
+document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+/* ---------- background per section ---------- */
+const bgSecs = [...document.querySelectorAll("[data-bg]")];
+
+/* ---------- scroll loop ---------- */
+const nav = $("nav"), prog = document.querySelector("#progress i"), dot = document.querySelector("#progress b");
+const street = $("street"), how = $("how"), track = $("track"), cards = [...track.children], stops = [...document.querySelectorAll(".roadLine .stop")];
+function secProgress(el) { const r = el.getBoundingClientRect(); return Math.min(1, Math.max(0, -r.top / (r.height - innerHeight))); }
+function onScroll() {
+  const y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+  nav.classList.toggle("solid", y > 40);
+  const p = max > 0 ? y / max : 0; prog.style.height = p * 100 + "%"; dot.style.top = p * 100 + "%";
+  // street
+  const sp = secProgress(street); setStat(Math.min(stats.length - 1, Math.floor(sp * stats.length * .999)));
+  // how
+  const hp = secProgress(how);
+  const shift = Math.max(0, track.scrollWidth - innerWidth + Math.max(24, (innerWidth - 1200) / 2 + 24));
+  track.style.transform = `translate3d(${-hp * shift}px,0,0)`;
+  const active = Math.min(cards.length - 1, Math.floor(hp * cards.length * .999));
+  cards.forEach((c, i) => c.classList.toggle("on", i <= active));
+  stops.forEach((s, i) => s.classList.toggle("on", i <= active));
+  $("roadDone").style.width = hp * 100 + "%"; $("roadCar").style.left = hp * 100 + "%";
+  // background
+  let bg = bgSecs[0].dataset.bg; for (const s of bgSecs) if (s.getBoundingClientRect().top < innerHeight * .5) bg = s.dataset.bg;
+  document.body.style.backgroundColor = bg;
+  vel = y - lastY; lastY = y;
+}
+addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", onScroll);
+function howPinned() { const r = how.getBoundingClientRect(); return r.top <= 2 && r.bottom >= innerHeight - 2; }
+addEventListener("wheel", (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && howPinned()) { e.preventDefault(); scrollBy(0, e.deltaX * 1.4); } }, { passive: false });
+let tx = 0, ty = 0, swiping = null;
+const howPin = how.querySelector(".pin");
+howPin.addEventListener("touchstart", (e) => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; swiping = null; }, { passive: true });
+howPin.addEventListener("touchmove", (e) => {
+  const x = e.touches[0].clientX, y = e.touches[0].clientY, dx = x - tx, dy = y - ty;
+  if (swiping === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) swiping = Math.abs(dx) > Math.abs(dy);
+  if (swiping) { e.preventDefault(); scrollBy(0, -dx * 2.2); tx = x; ty = y; }
+}, { passive: false });
+
+/* ---------- per-frame: marquee + cursor + parallax ---------- */
+const mq = $("mq"), glow = $("cursorGlow"), layers = [...document.querySelectorAll(".layer")];
+let mx = innerWidth / 2, my = innerHeight / 2, gx = mx, gy = my, px = 0, py = 0, tpx = 0, tpy = 0;
+if (!touch) {
+  addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; glow.style.opacity = 1; tpx = (e.clientX / innerWidth - .5); tpy = (e.clientY / innerHeight - .5); });
+  document.addEventListener("mouseleave", () => (glow.style.opacity = 0));
+}
+let lastVelY = 0;
+function frame() {
+  const v = scrollY - lastVelY; lastVelY = scrollY;
+  if (!reduce) {
+    mqX -= 0.6 + Math.min(14, Math.abs(v) * .35);
+    const half = mq.scrollWidth / 2; if (-mqX > half) mqX += half;
+    mq.style.transform = `translate3d(${mqX}px,0,0)`;
+  }
+  if (!touch) {
+    gx += (mx - gx) * .12; gy += (my - gy) * .12; glow.style.transform = `translate3d(${gx}px,${gy}px,0)`;
+    px += (tpx - px) * .08; py += (tpy - py) * .08;
+    if (scrollY < innerHeight) layers.forEach((l) => { const d = +l.dataset.depth; l.style.transform = `translate(${-px * d}px,${-py * d * .6}px)`; });
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+onScroll();
+})();
+</script>
+</body>
+</html>
