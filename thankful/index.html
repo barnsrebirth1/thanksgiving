@@ -70,7 +70,10 @@ label small { text-transform: none; letter-spacing: 0; font-family: Inter, sans-
 .field:focus-within { border-color: var(--amber); }
 .field span { font-family: Fraunces, serif; font-style: italic; font-size: 21px; color: var(--amber); white-space: nowrap; }
 .field input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--cream); font: 500 19px Inter, sans-serif; }
-.field.mono input { font: 15px "DM Mono", monospace; }
+.field.area { flex-direction: column; align-items: stretch; gap: 6px; }
+.field textarea { background: none; border: 0; outline: 0; resize: none; color: var(--cream); font: 500 22px/1.35 Inter, sans-serif; min-height: 92px; }
+.coinNote { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: rgba(255,181,71,.08); border: 1px dashed rgba(255,181,71,.35); font-size: 14px; color: var(--dim); } .coinNote b { color: var(--amber); } .coinNote span { font-family: "DM Mono", monospace; font-size: 12px; word-break: break-all; }
+.shared { display: none; margin: 0 auto 18px; max-width: 640px; padding: 12px 18px; border-radius: 14px; background: rgba(255,181,71,.1); border: 1px solid rgba(255,181,71,.35); font-size: 16px; } .shared.on { display: block; } .shared b { color: var(--amber); }
 .two { display: grid; grid-template-columns: .55fr 1fr; gap: 10px; }
 .count { text-align: right; font-family: "DM Mono", monospace; font-size: 11px; color: var(--dim); margin-top: 6px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -104,6 +107,7 @@ footer { border-top: 1px solid var(--line); padding: 30px 0 44px; color: var(--d
   <div class="feed" id="feed"></div>
   <div class="shade"></div>
   <div class="heroIn">
+    <div class="shared" id="shared"></div>
     <div class="tag"><i></i>Trending on X today</div>
     <h1>The whole timeline<br>is <em>thankful.</em></h1>
     <p class="lede">Founders, athletes, degens, your mum. Today everyone on X is finishing the same sentence. <b style="color:var(--cream)">"I am thankful for…"</b></p>
@@ -118,18 +122,17 @@ footer { border-top: 1px solid var(--line); padding: 30px 0 44px; color: var(--d
     <h2 class="h2">Finish the sentence. <em>Post it.</em></h2>
     <div class="grid">
       <div class="panel">
-        <label for="t">What are you thankful for?</label>
-        <div class="field"><span>I am thankful for</span><input id="t" maxlength="70" placeholder="my family" autocomplete="off"></div>
-        <div class="count"><span id="n">0</span>/70</div>
-        <div class="chips" id="chips"></div>
-        <label>Add your coin <small>(optional, for devs and holders)</small></label>
-        <div class="two"><div class="field mono"><input id="tk" maxlength="12" placeholder="$TICKER" autocomplete="off"></div><div class="field mono"><input id="ca" maxlength="64" placeholder="Contract address" autocomplete="off" spellcheck="false"></div></div>
+        <label for="t">What are you thankful for? <small>(write anything)</small></label>
+        <div class="field area"><span>I am thankful for</span><textarea id="t" maxlength="120" rows="3" placeholder="type it here…"></textarea></div>
+        <div class="count"><span id="n">0</span>/120</div>
+        <div class="coinNote">🦃 Every post includes <b id="cTick"></b> automatically. <span id="cCa"></span></div>
         <label>Card style</label>
         <div class="styles" id="styles"></div>
         <div class="btns">
           <a class="btn main" id="post" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.8-6.3L6.4 22H3.3l7.3-8.3L1 2h6.3l4.4 5.8L18.9 2zm-1.1 18h1.7L6.3 3.9H4.5L17.8 20z"/></svg>Post on X</a>
           <button class="btn" id="share" type="button" hidden>Share card + text</button>
           <button class="btn" id="dl" type="button">Download card</button>
+          <button class="btn" id="cp" type="button">Copy my link</button>
         </div>
         <p class="hint">Download the card and attach it to your post. Posts with a picture get far more eyes.</p>
       </div>
@@ -139,15 +142,16 @@ footer { border-top: 1px solid var(--line); padding: 30px 0 44px; color: var(--d
       </div>
     </div>
     <div class="how">
-      <div><b>1</b><h3>Say it</h3><p>Finish the sentence. Honest, funny, or both.</p></div>
-      <div><b>2</b><h3>Add your coin</h3><p>Got a coin you believe in? Drop the ticker and CA, and it goes on your card and your post.</p></div>
-      <div><b>3</b><h3>Post it</h3><p>One tap to X. Then send this page to someone, and keep it going.</p></div>
+      <div><b>1</b><h3>Say it</h3><p>Write whatever you're thankful for. Honest, funny, or both.</p></div>
+      <div><b>2</b><h3>Post it</h3><p>One tap to X. Your card and $THANKS go with it.</p></div>
+      <div><b>3</b><h3>Pass it on</h3><p>Copy your link and send it to a friend. They'll see your line and add theirs.</p></div>
     </div>
   </div>
 </section>
 
-<footer><div class="wrap">Made by the team behind <a href="../">$THANKS</a>, the Thanksgiving charity coin for Meals on Wheels America. Happy Thanksgiving. 🦃<br><span style="opacity:.7">Adding a CA puts it in your own post. We don't check or endorse any coin. Always do your own research.</span></div></footer>
+<footer><div class="wrap">Made by the team behind <a href="../">$THANKS</a>, the Thanksgiving charity coin for Meals on Wheels America. Happy Thanksgiving. 🦃<br><span style="opacity:.7">Memecoins are risky. Only buy what you can afford to lose.</span></div></footer>
 <div id="toast"></div>
+<script src="../config.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -159,23 +163,23 @@ footer { border-top: 1px solid var(--line); padding: 30px 0 44px; color: var(--d
   let cols = ""; for (let c = 0; c < 4; c++) { const pick = LINES.slice().sort(() => rnd() - .5).slice(0, 12); const html = pick.map(card).join(""); cols += `<div class="col">${html}${html}</div>`; }
   $("feed").innerHTML = cols;
 
-  const IDEAS = ["my family", "the friends who stuck around", "second chances", "my mum's cooking", "the volunteers at Meals on Wheels", "green candles", "the 10% of my bag that survived", "this community"];
-  $("chips").innerHTML = IDEAS.map((i) => `<button class="chip" type="button">${i}</button>`).join("");
-  document.querySelectorAll(".chip").forEach((b) => (b.onclick = () => { $("t").value = b.textContent; update(); }));
+  const COIN = { ticker: "$THANKS", ca: (window.TG_CONFIG && window.TG_CONFIG.CA) || "BECqBzwZmkzM7A3tWimc2qvm7ookzYi8XACHMZgipump" };
+  $("cTick").textContent = COIN.ticker; $("cCa").textContent = COIN.ca;
+  const qs = new URLSearchParams(location.search), shared = (qs.get("t") || "").slice(0, 120).replace(/[<>]/g, "");
+  if (shared) { $("shared").innerHTML = `Someone is thankful for <b>${shared.replace(/[.!]+$/, "")}</b>. What about you?`; $("shared").classList.add("on"); }
   const STYLES = [{ a: "#0b1222", b: "#1a2440", acc: "#ffb547", txt: "#f7ecdb" }, { a: "#2a0f18", b: "#5a1a2b", acc: "#ffcf73", txt: "#fff4e4" }, { a: "#f7ecdb", b: "#f1dcc0", acc: "#a8324f", txt: "#1d1410" }, { a: "#0b1a12", b: "#173a28", acc: "#9fe870", txt: "#f1fbe9" }];
   let st = 0; $("styles").innerHTML = STYLES.map((s, i) => `<button class="sw${i ? "" : " on"}" type="button" style="background:linear-gradient(135deg,${s.a},${s.b});box-shadow:inset 0 0 0 4px ${s.acc}55" data-i="${i}" aria-label="Style ${i + 1}"></button>`).join("");
   document.querySelectorAll(".sw").forEach((b) => (b.onclick = () => { st = +b.dataset.i; document.querySelectorAll(".sw").forEach((x) => x.classList.toggle("on", x === b)); draw(); }));
 
   const cv = $("cv"), x = cv.getContext("2d"), logo = new Image(); logo.src = "../assets/logo-192.png";
   const clean = (s) => s.trim().replace(/[.!]+$/, "");
-  const line = () => clean($("t").value) || "my family";
-  const tick = () => { let t = $("tk").value.trim().toUpperCase().replace(/[^A-Z0-9$]/g, ""); if (t && t[0] !== "$") t = "$" + t; return t; };
-  const ca = () => $("ca").value.trim();
+  const line = () => clean($("t").value.replace(/\s+/g, " ")) || "my family";
+  const tick = () => COIN.ticker, ca = () => COIN.ca;
   function wrap(text, maxW) { const w = text.split(" "), out = []; let cur = ""; for (const k of w) { const t = cur ? cur + " " + k : k; if (x.measureText(t).width > maxW && cur) { out.push(cur); cur = k; } else cur = t; } if (cur) out.push(cur); return out; }
   function draw() {
     const S = STYLES[st], W = 1200, H = 675; const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, S.a); g.addColorStop(1, S.b); x.fillStyle = g; x.fillRect(0, 0, W, H);
     const gl = x.createRadialGradient(1030, 130, 0, 1030, 130, 480); gl.addColorStop(0, S.acc + "55"); gl.addColorStop(1, S.acc + "00"); x.fillStyle = gl; x.fillRect(0, 0, W, H);
-    x.fillStyle = S.acc; x.globalAlpha = .9; x.fillRect(1024, 30, 12, 64); x.beginPath(); x.arc(1030, 122, 28, 0, 7); x.fill(); x.globalAlpha = 1;
+    x.font = "130px serif"; x.textAlign = "center"; x.fillText("🦃", 1040, 170); x.textAlign = "left";
     x.textAlign = "left"; x.fillStyle = S.acc; x.font = "italic 600 52px Fraunces"; x.fillText("I am thankful for", 86, 200);
     let size = 92; const txt = line() + "."; x.font = `800 ${size}px Fraunces`; let ls = wrap(txt, 1000); while ((ls.length > 3) && size > 44) { size -= 6; x.font = `800 ${size}px Fraunces`; ls = wrap(txt, 1000); }
     x.fillStyle = S.txt; ls.forEach((l, i) => x.fillText(l, 86, 200 + size * 1.08 * (i + 1)));
@@ -185,9 +189,11 @@ footer { border-top: 1px solid var(--line); padding: 30px 0 44px; color: var(--d
     else { if (logo.complete && logo.naturalWidth) { x.save(); x.beginPath(); x.arc(112, 612, 26, 0, 7); x.clip(); x.drawImage(logo, 86, 586, 52, 52); x.restore(); } x.fillStyle = S.txt; x.font = "700 26px Fraunces"; x.fillText("Happy Thanksgiving 🦃", 154, 621); }
     x.textAlign = "right"; x.fillStyle = S.acc; x.font = "20px 'DM Mono'"; x.fillText("thanksgivingcoin.site/thankful", 1114, 620);
   }
-  function text() { const t = tick(), c = ca(); let s = `I am thankful for ${line()}. 🦃`; if (t || c) s += `\n\n${[t, c].filter(Boolean).join("\n")}`; s += `\n\nWhat are you thankful for? thanksgivingcoin.site/thankful`; return s; }
+  function text() { return `I am thankful for ${line()}. 🦃\n\n${tick()}\n${ca()}\n\nWhat are you thankful for? thanksgivingcoin.site/thankful`; }
   function update() { $("n").textContent = $("t").value.length; const s = text(); $("pv").textContent = s; $("post").href = "https://x.com/intent/post?text=" + encodeURIComponent(s); draw(); }
-  ["t", "tk", "ca"].forEach((id) => $(id).addEventListener("input", update));
+  $("t").addEventListener("input", update);
+  const myLink = () => location.origin + location.pathname + "?t=" + encodeURIComponent(line());
+  $("cp").onclick = () => { navigator.clipboard?.writeText(myLink()).then(() => toast("Link copied. Send it to a friend"), () => toast(myLink())); };
   const toast = (m) => { const e = $("toast"); e.textContent = m; e.classList.add("on"); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove("on"), 1800); };
   const blob = () => new Promise((res) => cv.toBlob(res, "image/png"));
   $("dl").onclick = async () => { const b = await blob(), a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "i-am-thankful.png"; a.click(); toast("Card saved. Attach it to your post"); };
